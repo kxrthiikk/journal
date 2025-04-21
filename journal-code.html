@@ -1,0 +1,643 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Simple Orange Journal</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    
+    body {
+      font-family: 'Arial', sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      background-color: #f5f5f5;
+      padding: 15px;
+    }
+    
+    .journal-container {
+      position: relative;
+      width: 100%;
+      max-width: 595px; /* A4 width in px */
+      height: 842px; /* A4 height in px */
+      perspective: 2000px;
+    }
+    
+    .journal {
+      width: 100%;
+      height: 100%;
+      position: relative;
+      transform-style: preserve-3d;
+      transition: transform 0.5s;
+    }
+    
+    .journal-cover, .journal-page {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      transform-origin: left center;
+      transition: transform 0.5s ease;
+      transform-style: preserve-3d;
+      border-radius: 5px 15px 15px 5px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+      overflow: hidden;
+      padding: 20px;
+    }
+    
+    .journal-cover {
+      background-color: #e67e00; /* Orange color matching the image */
+      z-index: 4;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+    
+    .cover-content {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+    
+    .cover-spine {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 5%;
+      height: 100%;
+      background-color: #b76400;
+    }
+    
+    .elastic-band {
+      position: absolute;
+      top: 50%;
+      right: 5%;
+      width: 90%;
+      height: 5%;
+      background-color: #333;
+      transform: translateY(-50%);
+      opacity: 0.6;
+    }
+    
+    .cover-title {
+      font-size: clamp(24px, 8vw, 50px);
+      font-weight: bold;
+      color: rgba(0, 0, 0, 0.7);
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      transform: perspective(500px) rotateX(25deg);
+    }
+    
+    /* .journal-page {
+      background-color: #fff;
+      padding: 40px;
+      border: 1px solid #e0e0e0;
+      overflow-y: auto;
+      background-image: linear-gradient(to bottom, #fff 0%, #fffcf7 100%);
+    }
+    
+    .journal-page:nth-child(odd) {
+      background-image: linear-gradient(to bottom, #fffcf7 0%, #fff9f0 100%);
+    } */
+    
+    #page1{
+      background-image: linear-gradient(to bottom, #dbb76f 0%, #dbb76f 100%);
+    }
+
+    #page2{
+      background-image: linear-gradient(to bottom, #1f2a24 0%, #1f2a24 100%);
+    }
+
+    #page3{
+      background-image: linear-gradient(to bottom, #d7ba85 0%, #d7ba85 100%);
+    }
+
+    #page4{
+      background-image: linear-gradient(to bottom, #b18956 0%, #b18956 100%);
+    }
+    
+    .page-content {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+    }
+    
+    .page-title {
+      font-size: clamp(18px, 5vw, 28px);
+      margin-bottom: 20px;
+      color: #e67e00;
+      font-family: 'Courier New', monospace;
+      position: relative;
+    }
+    
+    .page-title::after {
+      content: '';
+      position: absolute;
+      bottom: -5px;
+      left: 0;
+      width: 100%;
+      height: 2px;
+      background: linear-gradient(to right, #e67e00, transparent);
+    }
+    
+    .page-text {
+      font-size: clamp(14px, 3vw, 18px);
+      color: #333;
+      line-height: 1.6;
+    }
+    
+    .photo-container {
+      width: 100%;
+      height: 200px;
+      border: 2px dashed #e67e00;
+      margin: 20px 0;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      background-color: rgba(230, 126, 0, 0.05);
+      position: relative;
+    }
+    
+    .photo-container input {
+      display: none;
+    }
+    
+    .photo-container label {
+      padding: 8px 16px;
+      background-color: #e67e00;
+      color: white;
+      border-radius: 4px;
+      cursor: pointer;
+      margin-top: 10px;
+    }
+    
+    .photo-placeholder {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      width: 100%;
+      height: 100%;
+      color: #999;
+      font-size: 14px;
+    }
+    
+    .photo-image {
+      max-width: 100%;
+      max-height: 100%;
+      object-fit: contain;
+      display: none;
+    }
+    
+    .nav-buttons {
+      position: absolute;
+      bottom: -60px;
+      width: 100%;
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+    }
+    
+    .nav-btn {
+      padding: 10px 25px;
+      background-color: #e67e00;
+      border: none;
+      border-radius: 5px;
+      color: #fff;
+      font-family: inherit;
+      font-size: 16px;
+      cursor: pointer;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+      transition: all 0.3s ease;
+    }
+    
+    .nav-btn:hover {
+      background-color: #d67200;
+    }
+    
+    .nav-btn:active {
+      transform: translateY(2px);
+    }
+    
+    .nav-btn:disabled {
+      background-color: #ccc;
+      cursor: not-allowed;
+      transform: none;
+    }
+    
+    .page-number {
+      position: absolute;
+      bottom: 20px;
+      right: 30px;
+      font-size: 14px;
+      color: #999;
+      font-family: 'Courier New', monospace;
+    }
+    
+    .book-edge {
+      position: absolute;
+      right: 0;
+      top: 0;
+      width: 20px;
+      height: 100%;
+      background-color: #fff;
+      border-radius: 0 5px 5px 0;
+      transform: translateX(10px);
+      box-shadow: inset -5px 0 10px rgba(0,0,0,0.1);
+    }
+    
+    /* Doodles */
+    .doodle {
+      position: absolute;
+      opacity: 0.5;
+      pointer-events: none;
+    }
+    
+    .doodle-1 {
+      top: 10px;
+      right: 20px;
+      width: 60px;
+      height: 60px;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100' fill='none' stroke='%23e67e00' stroke-width='2'%3E%3Cpath d='M20,50 Q35,20 50,50 Q65,80 80,50'/%3E%3Cpath d='M30,30 Q50,10 70,30'/%3E%3Cpath d='M30,70 Q50,90 70,70'/%3E%3C/svg%3E");
+      background-size: contain;
+      background-repeat: no-repeat;
+    }
+    
+    .doodle-2 {
+      bottom: 60px;
+      left: 10px;
+      width: 80px;
+      height: 80px;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100' fill='none' stroke='%23e67e00' stroke-width='2'%3E%3Ccircle cx='50' cy='50' r='20'/%3E%3Ccircle cx='50' cy='50' r='30'/%3E%3Ccircle cx='50' cy='50' r='40'/%3E%3C/svg%3E");
+      background-size: contain;
+      background-repeat: no-repeat;
+    }
+    
+    .doodle-3 {
+      top: 100px;
+      right: 40px;
+      width: 70px;
+      height: 70px;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100' fill='none' stroke='%23e67e00' stroke-width='2'%3E%3Cpath d='M20,20 L80,80'/%3E%3Cpath d='M20,80 L80,20'/%3E%3Cpath d='M50,20 L50,80'/%3E%3Cpath d='M20,50 L80,50'/%3E%3C/svg%3E");
+      background-size: contain;
+      background-repeat: no-repeat;
+    }
+    
+    .doodle-4 {
+      bottom: 30px;
+      right: 70px;
+      width: 50px;
+      height: 50px;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100' fill='none' stroke='%23e67e00' stroke-width='2'%3E%3Cpath d='M30,30 C10,50 10,70 30,90 C50,110 70,110 90,90 C110,70 110,50 90,30 C70,10 50,10 30,30 Z'/%3E%3C/svg%3E");
+      background-size: contain;
+      background-repeat: no-repeat;
+    }
+    
+    .doodle-5 {
+      top: 200px;
+      left: 30px;
+      width: 40px;
+      height: 40px;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100' fill='none' stroke='%23e67e00' stroke-width='2'%3E%3Cpath d='M20,20 L30,80 L80,50 L20,20 Z'/%3E%3C/svg%3E");
+      background-size: contain;
+      background-repeat: no-repeat;
+    }
+    
+    /* Mobile optimizations */
+    @media (max-width: 768px) {
+      .journal-container {
+        height: 70vh;
+        max-width: 100%;
+      }
+      
+      .nav-buttons {
+        bottom: -50px;
+      }
+      
+      .nav-btn {
+        padding: 8px 20px;
+        font-size: 14px;
+      }
+      
+      .journal-page {
+        padding: 25px;
+      }
+      
+      .photo-container {
+        height: 150px;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .journal-container {
+        height: 70vh;
+      }
+      
+      .cover-title {
+        font-size: 28px;
+      }
+      
+      .page-title {
+        font-size: 20px;
+      }
+      
+      .page-text {
+        font-size: 14px;
+      }
+      
+      .photo-container {
+        height: 120px;
+      }
+
+      .photo-fullsize {
+        border: none;
+        height: auto;
+        width: 100%;
+        margin: 20px 0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        background-color: transparent;
+        position: relative;
+      }
+
+      .photo-fullsize img {
+        display: block;
+        max-width: 100%;
+        height: auto;
+      }
+
+      .journal-image {
+        width: 100%;
+        max-height: 300px; /* Adjust this value as needed */
+        object-fit: contain;
+        margin: 15px 0;
+        border-radius: 5px;
+      }
+      .image-container {
+        height: 75%;
+      }
+
+    }
+  </style>
+</head>
+<body>
+  <div class="journal-container">
+    <div class="journal" id="journal">
+      <div class="journal-cover" id="cover">
+        <div class="cover-content">
+          <div class="cover-spine"></div>
+          <div class="elastic-band"></div>
+          <div class="book-edge"></div>
+          <h1 class="cover-title" id="journal-title" contenteditable="true">JOURNAL</h1>
+        </div>
+      </div>
+      
+      <div class="journal-page" id="page1">
+        <div class="page-content">
+          <h2 class="page-title">The First Photos</h2>
+          <div class="doodle doodle-1"></div>
+          <p class="page-text">
+            Welcome to your journal. This is a safe space to write down your thoughts, ideas, and reflections. Each page offers a new opportunity to explore your mind and document your journey.
+          </p>
+          
+          <p class="page-text">
+            Use the navigation buttons below to move between pages. The clean design allows you to focus solely on your content without distractions.
+          </p>
+
+          <div class="image-container" style="height: 75%;">
+            <img src="photo1.jpg" id="photo1" style="width: 100%; height: 94%; object-fit: contain; margin: 15px 0;">
+          </div>
+
+          <div class="doodle doodle-4"></div>
+          <span class="page-number">1</span>
+        </div>
+      </div>
+      
+      <div class="journal-page" id="page2">
+        <div class="page-content">
+          <h2 class="page-title">Daily Reflections</h2>
+          <div class="doodle doodle-2"></div>
+          <p class="page-text" style="color: #e67e00;">
+            Today's thoughts:
+          </p>
+          
+          <!-- <div class="photo-container">
+            <div class="photo-placeholder">Add a photo from today</div>
+            <img class="photo-image" id="photo2">
+            <input type="file" id="photo-input2" accept="image/*">
+            <label for="photo-input2">Add Photo</label>
+          </div> -->
+          
+          <p class="page-text" style="color: #e67e00;">
+            This page is dedicated to your daily reflections. What went well today? What challenges did you face? What are you looking forward to tomorrow?
+          </p>
+
+          <div class="image-container" style="height: 75%;">
+            <img src="photo2.jpg" id="photo2" style="width: 100%; height: 94%; object-fit: contain; margin: 15px 0;">
+          </div>
+          <div class="doodle doodle-5"></div>
+          <span class="page-number">2</span>
+        </div>
+      </div>
+      
+      <div class="journal-page" id="page3">
+        <div class="page-content">
+          <h2 class="page-title">Goals & Aspirations</h2>
+          <div class="doodle doodle-3"></div>
+          <p class="page-text">
+          </p>
+          
+          <!-- <div class="photo-container">
+            <div class="photo-placeholder">Add a vision board image</div>
+            <img class="photo-image" id="photo3">
+            <input type="file" id="photo-input3" accept="image/*">
+            <label for="photo-input3">Add Photo</label>
+          </div> -->
+          
+          <p class="page-text">
+            Setting clear intentions is the first step toward achievement. Revisit this page regularly to track your progress and adjust your course as needed.
+          </p>
+
+          <div class="image-container" style="height: 75%;">
+            <img src="photo3.jpg" id="photo3" style="width: 100%; height: 94%; object-fit: contain; margin: 15px 0;">
+          </div>
+          <div class="doodle doodle-1"></div>
+          <span class="page-number">3</span>
+        </div>
+      </div>
+      
+      <div class="journal-page" id="page4">
+        <div class="page-content">
+          <h2 class="page-title">Inspirational Quotes</h2>
+          <div class="doodle doodle-4"></div>
+          <p class="page-text">
+            "The best time to plant a tree was 20 years ago. The second best time is now." — Chinese Proverb
+          </p>
+          
+          <!-- <div class="photo-container">
+            <div class="photo-placeholder">Add an inspirational image</div>
+            <img class="photo-image" id="photo4">
+            <input type="file" id="photo-input4" accept="image/*">
+            <label for="photo-input4">Add Photo</label>
+          </div> -->
+          
+          <p class="page-text">
+            "You do not find the happy life. You make it." — Camilla Eyring Kimball
+            <br><br>
+            "The most difficult thing is the decision to act, the rest is merely tenacity." — Amelia Earhart
+            <br><br>
+            Use this page to collect words of wisdom that resonate with you and provide motivation when you need it most.
+          </p>
+
+          <div class="image-container" style="height: 75%;">
+            <img src="photo4.jpg" id="photo4" style="width: 100%; height: 94%; object-fit: contain; margin: 15px 0;">
+          </div>
+          <div class="doodle doodle-2"></div>
+          <span class="page-number">4</span>
+        </div>
+      </div>
+      
+      <div class="journal-page" id="page5">
+        <div class="page-content">
+          <h2 class="page-title">Notes & Ideas</h2>
+          <div class="doodle doodle-5"></div>
+          <p class="page-text">
+            This is a space for random thoughts, ideas, and inspirations that come to you throughout the day. Sometimes our most brilliant insights arrive unexpectedly.
+          </p>
+          
+          <!-- <div class="photo-container">
+            <div class="photo-placeholder">Add a sketch or image of your idea</div>
+            <img class="photo-image" id="photo5">
+            <input type="file" id="photo-input5" accept="image/*">
+            <label for="photo-input5">Add Photo</label>
+          </div> -->
+          
+          <p class="page-text">
+            • Idea one
+            <br>
+            • Idea two
+            <br>
+            • Idea three
+            <br><br>
+            Don't worry about organization or coherence here—just capture your thoughts before they fade away.
+          </p>
+          <div class="doodle doodle-3"></div>
+          <span class="page-number">5</span>
+        </div>
+      </div>
+    </div>
+    
+    <div class="nav-buttons">
+      <button class="nav-btn" id="prev-btn" disabled>Previous</button>
+      <button class="nav-btn" id="next-btn">Next</button>
+    </div>
+  </div>
+
+  <script>
+    const journal = document.getElementById('journal');
+    const prevBtn = document.getElementById('prev-btn');
+    const nextBtn = document.getElementById('next-btn');
+    const cover = document.getElementById('cover');
+    const pages = document.querySelectorAll('.journal-page');
+    const journalTitle = document.getElementById('journal-title');
+    
+    let currentPage = 0;
+    const totalPages = pages.length + 1; // +1 for cover
+    
+    function updateButtons() {
+      prevBtn.disabled = currentPage === 0;
+      nextBtn.disabled = currentPage === totalPages - 1;
+    }
+    
+    function flipPage(direction) {
+      const previousPage = currentPage;
+      currentPage += direction;
+      
+      if (currentPage < 0) currentPage = 0;
+      if (currentPage >= totalPages) currentPage = totalPages - 1;
+      
+      // Reset all pages
+      cover.style.transform = '';
+      pages.forEach((page, i) => {
+        page.style.transform = '';
+        page.style.zIndex = totalPages - i;
+      });
+      
+      // Apply transformations based on current page
+      if (currentPage > 0) {
+        cover.style.transform = 'rotateY(-180deg)';
+      }
+      
+      for (let i = 0; i < currentPage - 1; i++) {
+        if (i < pages.length) {
+          pages[i].style.transform = 'rotateY(-180deg)';
+        }
+      }
+      
+      updateButtons();
+    }
+    
+    prevBtn.addEventListener('click', () => flipPage(-1));
+    nextBtn.addEventListener('click', () => flipPage(1));
+    
+    // Make journal title editable
+    journalTitle.addEventListener('focus', function() {
+      this.dataset.original = this.textContent;
+    });
+    
+    journalTitle.addEventListener('blur', function() {
+      if (this.textContent.trim() === '') {
+        this.textContent = this.dataset.original || 'JOURNAL';
+      }
+    });
+    
+    journalTitle.addEventListener('keydown', function(e) {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        this.blur();
+      }
+    });
+    
+    // Initialize
+    updateButtons();
+    
+    // Apply initial z-indexes
+    cover.style.zIndex = totalPages;
+    pages.forEach((page, i) => {
+      page.style.zIndex = totalPages - i - 1;
+    });
+    
+    // Handle photo uploads
+    // for (let i = 1; i <= 5; i++) {
+    //   const input = document.getElementById(`photo-input${i}`);
+    //   const img = document.getElementById(`photo${i}`);
+    //   const placeholder = input.previousElementSibling.previousElementSibling;
+      
+    //   input.addEventListener('change', function(e) {
+    //     if (input.files && input.files[0]) {
+    //       const reader = new FileReader();
+          
+    //       reader.onload = function(e) {
+    //         img.src = e.target.result;
+    //         img.style.display = 'block';
+    //         placeholder.style.display = 'none';
+    //       };
+          
+    //       reader.readAsDataURL(input.files[0]);
+    //     }
+    //   });
+    // }
+  </script>
+</body>
+</html>

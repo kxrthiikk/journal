@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cute Interactive Journal</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    
+    body {
+      font-family: 'Comic Sans MS', cursive, sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      background-color: #f9f3e9;
+      overflow-x: hidden;
+    }
+    
+    .journal-container {
+      position: relative;
+      width: 800px;
+      height: 600px;
+      perspective: 1500px;
+    }
+    
+    .journal {
+      width: 100%;
+      height: 100%;
+      position: relative;
+      transform-style: preserve-3d;
+      transform: translateZ(-25px);
+      transition: transform 0.5s;
+    }
+    
+    .journal-cover, .journal-page {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      transform-origin: left center;
+      transition: transform 0.5s;
+      transform-style: preserve-3d;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      border-radius: 5px 15px 15px 5px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+      overflow: hidden;
+      padding: 20px;
+    }
+    
+    .journal-cover {
+      background-color: #ffc7d1;
+      z-index: 4;
+      background-image: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M80 50 Q 95 35, 80 20 Q 65 5, 50 20 Q 35 35, 20 20 Q 5 5, 20 20 Q 35 35, 50 50' stroke='%23ff96ad' fill='none' stroke-width='2' /%3E%3C/svg%3E");
+    }
+    
+    .journal-page {
+      background-color: #fff;
+      padding: 40px;
+      background-image: linear-gradient(#dedede 1px, transparent 1px), linear-gradient(90deg, #dedede 1px, transparent 1px);
+      background-size: 20px 20px;
+      border: 1px solid #e0e0e0;
+      line-height: 1.6;
+    }
+    
+    .journal-page:nth-child(odd) {
+      background-color: #fffcf7;
+    }
+    
+    .page-content {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+    }
+    
+    .doodle-container {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+    
+    .page-title {
+      font-size: 24px;
+      margin-bottom: 15px;
+      text-align: center;
+      color: #ff6b93;
+      text-shadow: 1px 1px 0 #fff;
+    }
+    
+    .page-text {
+      font-size: 16px;
+      color: #555;
+    }
+    
+    .nav-buttons {
+      position: absolute;
+      bottom: -50px;
+      width: 100%;
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+    }
+    
+    .nav-btn {
+      padding: 8px 20px;
+      background-color: #ffc7d1;
+      border: none;
+      border-radius: 20px;
+      color: #fff;
+      font-family: inherit;
+      font-size: 16px;
+      cursor: pointer;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+      transition: all 0.3s ease;
+    }
+    
+    .nav-btn:hover {
+      background-color: #ff96ad;
+      transform: translateY(-2px);
+    }
+    
+    .nav-btn:disabled {
+      background-color: #e0e0e0;
+      cursor: not-allowed;
+      transform: none;
+    }
+    
+    .doodle {
+      max-width: 150px;
+      height: auto;
+    }
+    
+    @keyframes floating {
+      0% { transform: translate(0, 0) rotate(0deg); }
+      50% { transform: translate(0, -10px) rotate(5deg); }
+      100% { transform: translate(0, 0) rotate(0deg); }
+    }
+    
+    @keyframes writing {
+      0% { stroke-dashoffset: 1000; }
+      100% { stroke-dashoffset: 0; }
+    }
+    
+    .floating {
+      animation: floating 3s ease-in-out infinite;
+    }
+    
+    .page-number {
+      position: absolute;
+      bottom: 10px;
+      right: 20px;
+      font-size: 12px;
+      color: #aaa;
+    }
+    
+    .cover-title {
+      font-size: 32px;
+      font-weight: bold;
+      color: #fff;
+      text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+  <div class="journal-container">
+    <div class="journal" id="journal">
+      <div class="journal-cover" id="cover">
+        <div class="page-content">
+          <h1 class="cover-title">My Cute Journal</h1>
+          <div class="doodle-container">
+            <svg class="doodle floating" viewBox="0 0 100 100" width="200" height="200">
+              <circle cx="50" cy="50" r="40" fill="#ffd6e0" />
+              <circle cx="35" cy="40" r="5" fill="#fff" />
+              <circle cx="65" cy="40" r="5" fill="#fff" />
+              <circle cx="35" cy="42" r="2" fill="#333" />
+              <circle cx="65" cy="42" r="2" fill="#333" />
+              <path d="M40 60 Q 50 70 60 60" stroke="#ff6b93" stroke-width="2" fill="none" />
+              <path d="M25 30 Q 15 15 5 20" stroke="#ff6b93" stroke-width="2" fill="none" />
+              <path d="M75 30 Q 85 15 95 20" stroke="#ff6b93" stroke-width="2" fill="none" />
+            </svg>
+          </div>
+        </div>
+      </div>
+      
+      <div class="journal-page" id="page1">
+        <div class="page-content">
+          <h2 class="page-title">Welcome to My Journal!</h2>
+          <div class="doodle-container">
+            <svg class="doodle" viewBox="0 0 100 100" width="150" height="150">
+              <path d="M10,50 Q25,20 50,50 Q75,80 90,50" fill="none" stroke="#ff96ad" stroke-width="3" stroke-dasharray="1000" stroke-dashoffset="1000">
+                <animate attributeName="stroke-dashoffset" from="1000" to="0" dur="3s" begin="0s" fill="freeze" />
+              </path>
+              <circle cx="10" cy="50" r="5" fill="#ffc7d1">
+                <animate attributeName="cy" values="50;45;50" dur="2s" repeatCount="indefinite" />
+              </circle>
+              <circle cx="90" cy="50" r="5" fill="#ffc7d1">
+                <animate attributeName="cy" values="50;55;50" dur="2s" repeatCount="indefinite" />
+              </circle>
+            </svg>
+          </div>
+          <p class="page-text">
+            This is the start of my journal journey! Here I'll collect my thoughts, doodles, and memories. 
+            Feel free to navigate through the pages using the buttons below.
+          </p>
+          <span class="page-number">1</span>
+        </div>
+      </div>
+      
+      <div class="journal-page" id="page2">
+        <div class="page-content">
+          <h2 class="page-title">Daily Gratitude</h2>
+          <div class="doodle-container">
+            <svg class="doodle floating" viewBox="0 0 100 100" width="150" height="150">
+              <path d="M50,20 L60,40 L85,45 L67.5,60 L72.5,85 L50,73 L27.5,85 L32.5,60 L15,45 L40,40 Z" fill="#ffeb99" stroke="#ffcc00" stroke-width="2"></path>
+              <circle cx="50" cy="50" r="5" fill="#ffcc00">
+                <animate attributeName="r" values="5;6;5" dur="2s" repeatCount="indefinite" />
+              </circle>
+            </svg>
+          </div>
+          <p class="page-text">
+            Today I'm grateful for:<br>
+            1. Sunny weather<br>
+            2. Good conversations<br>
+            3. Creative inspiration<br><br>
+            Remember to find joy in the small things!
+          </p>
+          <span class="page-number">2</span>
+        </div>
+      </div>
+      
+      <div class="journal-page" id="page3">
+        <div class="page-content">
+          <h2 class="page-title">My Goals & Dreams</h2>
+          <div class="doodle-container">
+            <svg class="doodle" viewBox="0 0 100 100" width="150" height="150">
+              <path d="M30,80 C10,70 10,30 30,20 C50,10 70,10 85,25 C95,35 95,65 85,75 C70,90 50,90 30,80 Z" fill="#bae1ff" stroke="#64b5f6" stroke-width="2"></path>
+              <circle cx="45" cy="50" r="3" fill="white">
+                <animate attributeName="cy" values="50;45;50;55;50" dur="4s" repeatCount="indefinite" />
+              </circle>
+              <circle cx="60" cy="50" r="5" fill="white">
+                <animate attributeName="cy" values="50;55;50;45;50" dur="3s" repeatCount="indefinite" />
+              </circle>
+            </svg>
+          </div>
+          <p class="page-text">
+            Short-term goals:<br>
+            • Learn to bake bread<br>
+            • Read 10 new books<br><br>
+            
+            Long-term dreams:<br>
+            • Travel to Japan<br>
+            • Write a children's book
+          </p>
+          <span class="page-number">3</span>
+        </div>
+      </div>
+      
+      <div class="journal-page" id="page4">
+        <div class="page-content">
+          <h2 class="page-title">Favorite Quotes</h2>
+          <div class="doodle-container">
+            <svg class="doodle" viewBox="0 0 100 100" width="150" height="150">
+              <rect x="20" y="20" width="60" height="60" rx="5" ry="5" fill="#e2f0cb" stroke="#a8d18c" stroke-width="2"></rect>
+              <path d="M30,40 L70,40" stroke="#a8d18c" stroke-width="2">
+                <animate attributeName="y1" values="40;37;40;43;40" dur="3s" repeatCount="indefinite" />
+                <animate attributeName="y2" values="40;43;40;37;40" dur="3s" repeatCount="indefinite" />
+              </path>
+              <path d="M30,50 L60,50" stroke="#a8d18c" stroke-width="2">
+                <animate attributeName="y1" values="50;53;50;47;50" dur="4s" repeatCount="indefinite" />
+                <animate attributeName="y2" values="50;47;50;53;50" dur="4s" repeatCount="indefinite" />
+              </path>
+              <path d="M30,60 L65,60" stroke="#a8d18c" stroke-width="2">
+                <animate attributeName="y1" values="60;57;60;63;60" dur="3.5s" repeatCount="indefinite" />
+                <animate attributeName="y2" values="60;63;60;57;60" dur="3.5s" repeatCount="indefinite" />
+              </path>
+            </svg>
+          </div>
+          <p class="page-text">
+            "The future belongs to those who believe in the beauty of their dreams." — Eleanor Roosevelt<br><br>
+            "Happiness can be found even in the darkest of times, if one only remembers to turn on the light." — Albus Dumbledore
+          </p>
+          <span class="page-number">4</span>
+        </div>
+      </div>
+      
+      <div class="journal-page" id="page5">
+        <div class="page-content">
+          <h2 class="page-title">My Happy Place</h2>
+          <div class="doodle-container">
+            <svg class="doodle floating" viewBox="0 0 100 100" width="150" height="150">
+              <circle cx="50" cy="70" r="25" fill="#a6dca6" />
+              <rect x="45" y="30" width="10" height="40" fill="#8d6e63" />
+              <circle cx="50" cy="20" r="15" fill="#ffb6c1">
+                <animate attributeName="r" values="15;17;15" dur="2s" repeatCount="indefinite" />
+              </circle>
+              <circle cx="50" cy="20" r="10" fill="#ff8da1">
+                <animate attributeName="r" values="10;12;10" dur="2s" repeatCount="indefinite" />
+              </circle>
+            </svg>
+          </div>
+          <p class="page-text">
+            My perfect day would include:<br>
+            • A quiet morning with coffee<br>
+            • Reading in a sunny garden<br>
+            • Walking along the beach<br>
+            • Stargazing at night<br><br>
+            Where would you go to find peace?
+          </p>
+          <span class="page-number">5</span>
+        </div>
+      </div>
+    </div>
+    
+    <div class="nav-buttons">
+      <button class="nav-btn" id="prev-btn" disabled>Previous</button>
+      <button class="nav-btn" id="next-btn">Next</button>
+    </div>
+  </div>
+
+  <script>
+    const journal = document.getElementById('journal');
+    const prevBtn = document.getElementById('prev-btn');
+    const nextBtn = document.getElementById('next-btn');
+    const cover = document.getElementById('cover');
+    const pages = document.querySelectorAll('.journal-page');
+    
+    let currentPage = 0;
+    const totalPages = pages.length + 1; // +1 for cover
+    
+    function updateButtons() {
+      prevBtn.disabled = currentPage === 0;
+      nextBtn.disabled = currentPage === totalPages - 1;
+    }
+    
+    function flipPage(direction) {
+      const previousPage = currentPage;
+      currentPage += direction;
+      
+      if (currentPage < 0) currentPage = 0;
+      if (currentPage >= totalPages) currentPage = totalPages - 1;
+      
+      // Reset all pages
+      cover.style.transform = '';
+      pages.forEach((page, i) => {
+        page.style.transform = '';
+        page.style.zIndex = totalPages - i;
+      });
+      
+      // Apply transformations based on current page
+      if (currentPage > 0) {
+        cover.style.transform = 'rotateY(-180deg)';
+      }
+      
+      for (let i = 0; i < currentPage - 1; i++) {
+        if (i < pages.length) {
+          pages[i].style.transform = 'rotateY(-180deg)';
+        }
+      }
+      
+      updateButtons();
+      
+      // Add animation class to current page content
+      if (direction > 0 && currentPage > 0 && currentPage <= pages.length) {
+        const doodles = pages[currentPage-1].querySelectorAll('.doodle');
+        doodles.forEach(doodle => {
+          doodle.style.animation = 'none';
+          setTimeout(() => {
+            doodle.style.animation = '';
+          }, 10);
+        });
+      } else if (direction < 0 && previousPage > 0 && previousPage <= pages.length) {
+        const doodles = pages[previousPage-2] ? pages[previousPage-2].querySelectorAll('.doodle') : [];
+        doodles.forEach(doodle => {
+          doodle.style.animation = 'none';
+          setTimeout(() => {
+            doodle.style.animation = '';
+          }, 10);
+        });
+      }
+    }
+    
+    prevBtn.addEventListener('click', () => flipPage(-1));
+    nextBtn.addEventListener('click', () => flipPage(1));
+    
+    // Initialize
+    updateButtons();
+    
+    // Apply initial z-indexes
+    cover.style.zIndex = totalPages;
+    pages.forEach((page, i) => {
+      page.style.zIndex = totalPages - i - 1;
+    });
+  </script>
+</body>
+</html>
