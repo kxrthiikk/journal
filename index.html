@@ -4,9 +4,6 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Simple Orange Journal</title>
-  <!-- <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Indie+Flower&display=swap" rel="stylesheet"> -->
   <style>
     @font-face {
       font-family: 'Neucha';  /* Define the font family name */
@@ -30,7 +27,6 @@
       min-height: 100vh;
       background-color: #ffdd9a63;
       padding: 15px;
-      
     }
     
     .journal-container {
@@ -318,10 +314,31 @@
       background-repeat: no-repeat;
     }
     
+    /* Image container styling */
+    .image-container {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      width: 100%;
+      margin: 10px 0;
+      flex-grow: 1;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .image-container img {
+      max-width: 100%;
+      max-height: 100%;
+      object-fit: contain;
+      margin: 0 auto;
+      display: block;
+    }
+    
     /* Mobile optimizations */
     @media (max-width: 768px) {
       .journal-container {
-        height: 70vh;
+        height: 80vh; /* Increased from 70vh */
+        max-height: 800px;
         max-width: 100%;
       }
       
@@ -335,17 +352,35 @@
       }
       
       .journal-page {
-        padding: 25px;
+        padding: 15px;
       }
       
-      .photo-container {
-        height: 150px;
+      .image-container {
+        height: auto;
+        min-height: 200px;
+        max-height: 50%;
+      }
+      
+      .page-text {
+        font-size: 14px;
+        margin-bottom: 10px;
+      }
+      
+      .page-title {
+        margin-bottom: 15px;
+      }
+      
+      /* Adjust content to fit smaller screens */
+      .page-content {
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
       }
     }
 
     @media (max-width: 480px) {
       .journal-container {
-        height: 70vh;
+        height: 80vh;
       }
       
       .cover-title {
@@ -358,41 +393,71 @@
       
       .page-text {
         font-size: 14px;
+        margin-bottom: 5px;
       }
       
-      .photo-container {
-        height: 120px;
-      }
-
-      .photo-fullsize {
-        border: none;
-        height: auto;
-        width: 100%;
-        margin: 20px 0;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        background-color: transparent;
-        position: relative;
-      }
-
-      .photo-fullsize img {
-        display: block;
-        max-width: 100%;
-        height: auto;
-      }
-
-      .journal-image {
-        width: 100%;
-        max-height: 300px; /* Adjust this value as needed */
-        object-fit: contain;
-        margin: 15px 0;
-        border-radius: 5px;
-      }
+      /* Make images fit better on mobile */
       .image-container {
-        height: 75%;
+        flex-grow: 1;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        height: auto;
+        max-height: 60%;
+        margin: 5px 0;
+        padding: 0;
       }
+      
+      .image-container img {
+        max-width: 100%;
+        max-height: 100%;
+        width: auto;
+        height: auto;
+        object-fit: contain;
+      }
+      
+      /* Adjust spacing for mobile */
+      .journal-page {
+        padding: 12px;
+        display: flex;
+        flex-direction: column;
+      }
+      
+      .page-content {
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+      }
+      
+      .doodle {
+        transform: scale(0.7);
+      }
+      
+      .page-number {
+        bottom: 10px;
+        right: 15px;
+      }
+    }
 
+    /* Fix for very small screens */
+    @media (max-height: 600px) {
+      .journal-container {
+        height: 75vh;
+      }
+      
+      .image-container {
+        max-height: 50%;
+      }
+      
+      .page-text {
+        font-size: 12px;
+        line-height: 1.4;
+      }
+      
+      .page-title {
+        font-size: 18px;
+        margin-bottom: 10px;
+      }
     }
   </style>
 </head>
@@ -420,8 +485,8 @@
             After tons of chatting, we met a few times but never took a photo ("Idk why??"). Finally, the day she was leaving for her studies, we clicked our first ever photo together – a special one!
           </p>
 
-          <div class="image-container" style="height: 75%;">
-            <img src="assets/images/photo1.jpg" id="photo1" style="width: 100%; height: 85%; object-fit: contain; margin: 15px 0;">
+          <div class="image-container">
+            <img src="assets/images/photo1.jpg" id="photo1" alt="First photo together">
           </div>
 
           <div class="doodle doodle-4"></div>
@@ -441,8 +506,8 @@
             I think talking about this day may make this journal look like an encyclopedia, each and every moment was special. Maybe looking at this picture can rewind that day like a dreamy movie. I think you too feel the same peppe!
           </p>
 
-          <div class="image-container" style="height: 75%;">
-            <img src="assets/images/photo2.jpg" id="photo2" style="width: 100%; height: 94%; object-fit: contain; margin: 15px 0;">
+          <div class="image-container">
+            <img src="assets/images/photo2.jpg" id="photo2" alt="Special day photo">
           </div>
           <div class="doodle doodle-5"></div>
           <span class="page-number">2</span>
@@ -454,14 +519,11 @@
           <h2 class="page-title">850₹ and lipstick</h2>
           <div class="doodle doodle-3"></div>
           <p class="page-text">
-          </p>
-          
-          <p class="page-text">
             I made peppe and anju ("Her cousin and mine friend too") wait for hours lol...and that made her go buy things she wasn't even supposed to. But of course, she blamed me for it, even though it made no sense at all!! Although this dayout was only for couple of hours but really felt it was like an entire day.
           </p>
 
-          <div class="image-container" style="height: 75%;">
-            <img src="assets/images/photo3.jpg" id="photo3" style="width: 100%; height: 94%; object-fit: contain; margin: 15px 0;">
+          <div class="image-container">
+            <img src="assets/images/photo3.jpg" id="photo3" alt="Shopping day photo">
           </div>
           <div class="doodle doodle-1"></div>
           <span class="page-number">3</span>
@@ -475,13 +537,13 @@
           <p class="page-text">
             Beach Day Part - 2 (But we reach quite a lot late there)
           </p>
-          <br>
+          
           <p class="page-text">
             "Beach Day Part - 1 was a midnight kind of thing which we enjoyed moon rise at the beach. Beach Day Part - 2 was a little late which we enjoyed a good slow and calm sunrise. Ofcourse the beach, music, and her made me the most calm and comfortable person in the entire world, Like i was the richest person in the entire world that i dont need anything other than this. Always thanks to you peppe for making feel like this.
           </p>
 
-          <div class="image-container" style="height: 75%;">
-            <img src="assets/images/photo4.jpg" id="photo4" style="width: 100%; height: 94%; object-fit: contain; margin: 15px 0;">
+          <div class="image-container">
+            <img src="assets/images/photo4.jpg" id="photo4" alt="Beach day photo">
           </div>
           <div class="doodle doodle-2"></div>
           <span class="page-number">4</span>
@@ -495,12 +557,12 @@
           <p class="page-text">
             Just Kidding...
           </p>
-          <br>
+          
           <p class="page-text">
-            This is just the beginning... A lot of memories are waiting to be captured here. I'm not sure (I really want to make it happen). Here's to more moments, laughs, and memories that will last forever. To those spontaneous days, silly arguments, and those times that make you wonder how we even ended up here. Even when things don’t make sense, it’s these moments that make life worth it. So here’s to more crazy adventures and memories that will keep us laughing for years to come!
+            This is just the beginning... A lot of memories are waiting to be captured here. I'm not sure (I really want to make it happen). Here's to more moments, laughs, and memories that will last forever. To those spontaneous days, silly arguments, and those times that make you wonder how we even ended up here. Even when things don't make sense, it's these moments that make life worth it. So here's to more crazy adventures and memories that will keep us laughing for years to come!
           </p>
-          <br>
-          <p style="text-align: center;">
+          
+          <p class="page-text" style="text-align: center; margin-top: 10px;">
             Till then, ciao!
           </p>
           <div class="doodle doodle-3"></div>
