@@ -4,10 +4,16 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Simple Orange Journal</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <!-- <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Indie+Flower&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Indie+Flower&display=swap" rel="stylesheet"> -->
   <style>
+    @font-face {
+      font-family: 'Neucha';  /* Define the font family name */
+      src: url('assets/fonts/Neucha-Regular.ttf') format('truetype');  /* Path to the .ttf file */
+      font-weight: normal;
+      font-style: normal;
+    }
     * {
       box-sizing: border-box;
       margin: 0;
@@ -15,7 +21,7 @@
     }
     
     body {
-      font-family: "Neucha", cursive;
+      font-family: "Neucha", sans-serif;
       font-weight: 400;
       font-style: normal;
       display: flex;
@@ -415,7 +421,7 @@
           </p>
 
           <div class="image-container" style="height: 75%;">
-            <img src="photo1.jpg" id="photo1" style="width: 100%; height: 85%; object-fit: contain; margin: 15px 0;">
+            <img src="assets/images/photo1.jpg" id="photo1" style="width: 100%; height: 85%; object-fit: contain; margin: 15px 0;">
           </div>
 
           <div class="doodle doodle-4"></div>
@@ -436,7 +442,7 @@
           </p>
 
           <div class="image-container" style="height: 75%;">
-            <img src="photo2.jpg" id="photo2" style="width: 100%; height: 94%; object-fit: contain; margin: 15px 0;">
+            <img src="assets/images/photo2.jpg" id="photo2" style="width: 100%; height: 94%; object-fit: contain; margin: 15px 0;">
           </div>
           <div class="doodle doodle-5"></div>
           <span class="page-number">2</span>
@@ -455,7 +461,7 @@
           </p>
 
           <div class="image-container" style="height: 75%;">
-            <img src="photo3.jpg" id="photo3" style="width: 100%; height: 94%; object-fit: contain; margin: 15px 0;">
+            <img src="assets/images/photo3.jpg" id="photo3" style="width: 100%; height: 94%; object-fit: contain; margin: 15px 0;">
           </div>
           <div class="doodle doodle-1"></div>
           <span class="page-number">3</span>
@@ -475,7 +481,7 @@
           </p>
 
           <div class="image-container" style="height: 75%;">
-            <img src="photo4.jpg" id="photo4" style="width: 100%; height: 94%; object-fit: contain; margin: 15px 0;">
+            <img src="assets/images/photo4.jpg" id="photo4" style="width: 100%; height: 94%; object-fit: contain; margin: 15px 0;">
           </div>
           <div class="doodle doodle-2"></div>
           <span class="page-number">4</span>
